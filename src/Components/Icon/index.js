@@ -1,20 +1,16 @@
 import { useState } from "react";
 
 export const Icon = ({ image, names, ...props }) => {
-  const [counter, setCounter] = useState(0);
-
-  const sayHi = () => {
-    alert("hi");
-  };
-
   return (
     <div>
-      <img height="30px" src={image} />
-      {names.join(", ")}
+      <img
+        height="90px"
+        src={image}
+        style={{ clip: "rect(0, 10px, 20px, 0)" }}
+      />
+      {/* {names.join(", ")} */}
       <br />
       <br />
-      {counter}
-      <button onClick={() => setCounter(counter + 1)}>Increment</button>
     </div>
   );
 };

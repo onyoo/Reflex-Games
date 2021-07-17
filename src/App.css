@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.image-container {
+  position: relative;
+}
+.image-clip {
+  position: absolute;
+  clip: rect(0, 100px, 200px, 0);
+  /* clip: shape(top, right, bottom, left); NB 'rect' is the only available option */
+}

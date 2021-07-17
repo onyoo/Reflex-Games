@@ -3,6 +3,7 @@ import logo from "./img/animal-icons-featured.png";
 import "./App.css";
 import { Icon } from "./Components/Icon";
 import { Card } from "./Components/Card";
+import { User } from "./Components/User";
 
 const App = () => {
   const icons = [
@@ -44,9 +45,17 @@ const App = () => {
     { id: "skip", logo: logo, names: ["ghost3", "fantasma3"] },
   ];
 
+  let card1 = <Card icons={icons.slice(0, 6)} />
+  let card2 = <Card icons={icons.slice(6, 12)} />
+  let card3 = <Card icons={icons.slice(12, 18)} />
+  let card4 = <Card icons={icons.slice(18, 24)} />
+
   return (
     <div className="App">
-      <Card icons={icons} />
+      <User name="Roberto" cards={[card1, card2]} />
+      <br/>
+      <br/>
+      <User name="Kari" cards={[card3, card4]} />
     </div>
   );
 };

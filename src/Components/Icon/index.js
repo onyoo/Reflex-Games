@@ -1,13 +1,12 @@
 import { useState } from "react";
 
-export const Icon = ({ image, names, ...props }) => {
+export const Icon = ({ image, names, style, id, ...props }) => {
   return (
-    <div>
-      <img
-        height="90px"
-        src={image}
-        style={{ clip: "rect(0, 10px, 20px, 0)" }}
-      />
+    <div
+      id={id}
+      style={{ position: "relative", display: "inline-block", padding: "1em" }}
+    >
+      <img height="400px" src={image} style={{ ...style }} />
       {/* {names.join(", ")} */}
       <br />
       <br />

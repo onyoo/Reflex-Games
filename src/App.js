@@ -1,6 +1,5 @@
 import sprite from "./img/animal-icons-featured.png";
 import "./App.css";
-import { Icon } from "./Components/Icon";
 import { Card } from "./Components/Card";
 import { User } from "./Components/User";
 
@@ -34,22 +33,22 @@ let confIcons = [
   "oxen",
   "cheetah",
   "snake",
-  "skip",
+  "skip1",
   "hippo",
-  "skip",
+  "skip2",
   "wolf",
   "water-buffalo",
   "gazelle",
   "hyena",
-  "skip",
-  "skip",
+  "skip3",
+  "skip4",
   "baboon",
-  "skip",
+  "skip5",
   "stork",
-  "skip",
+  "skip6",
   "horse",
   "badger",
-  "skip",
+  "skip7",
   "bear",
   "fox",
   "pig",
@@ -57,9 +56,9 @@ let confIcons = [
   "donkey",
   "pegasus",
   "bison",
-  "skip",
+  "skip8",
   "otter",
-  "skip",
+  "skip9",
 ];
 
 let iconObjects = confIcons.map((id, idx) => {
@@ -71,27 +70,30 @@ let iconObjects = confIcons.map((id, idx) => {
 });
 
 const App = () => {
-  const getUnique = (randomIconMap) => {
-    let icon = iconObjects[Math.floor(Math.random() * iconObjects.length)];
-    while (icon.id in randomIconMap) {
-      icon = iconObjects[Math.floor(Math.random() * iconObjects.length)];
+  const getUnique = (usedIds) => {
+    let filteredIcons = iconObjects.filter(
+      (icon) => usedIds.indexOf(icon.id) === -1
+    );
+    let icon;
+    while (!icon && filteredIcons.length > 0) {
+      let idx = Math.floor(Math.random() * filteredIcons.length);
+      icon = filteredIcons[idx];
     }
     return icon;
   };
 
   const generateRandomIcons = (n) => {
     let randomIcons = [];
-    let randomIconMap = {};
-    for (var i = 0; i < n; i++) {
-      let randIcon = getUnique(randomIconMap);
-      randomIconMap[randIcon.id] = 1;
+
+    for (var i = 0; i < n && i < iconObjects.length; i++) {
+      let usedIds = randomIcons.map((icon) => icon.id);
+      let randIcon = getUnique(usedIds);
       randomIcons.push(randIcon);
     }
-    console.log(randomIcons.map((o) => o.id));
     return randomIcons;
   };
 
-  let card1 = <Card icons={generateRandomIcons(9)} />;
+  let card1 = <Card icons={generateRandomIcons(125)} />;
   let card2 = <Card icons={generateRandomIcons(4)} />;
 
   return (

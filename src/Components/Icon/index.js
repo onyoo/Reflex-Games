@@ -1,7 +1,4 @@
-import { useState } from "react";
-
 export const Icon = ({ image, names, style, id, ...props }) => {
-  console.log(style);
   return (
     <div
       id={id}
@@ -10,7 +7,7 @@ export const Icon = ({ image, names, style, id, ...props }) => {
       <div
         style={{
           backgroundImage: `url(${"./img/animal-icons-featured-pub.png"})`,
-          backgroundPosition: `right ${style.right} bottom ${style.top}`,
+          backgroundPosition: `right ${style.bottom} bottom ${style.right}`,
           backgroundSize: "400px",
           height: "60px",
           width: "60px",

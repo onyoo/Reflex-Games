@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Icon } from "../Icon";
-import logo from "../../img/animal-icons-featured.png";
+// import logo from "../../img/animal-icons-featured.png";
 
 export const Card = ({ icons, ...props }) => {
   return (
@@ -13,12 +12,13 @@ export const Card = ({ icons, ...props }) => {
             image={"../../img/animal-icons-featured.png"} //{icon.img}
             names={icon.names}
             id={icon.id}
+            key={icon.id}
             style={{
               position: "absolute",
-              top: `-${icon.position.top}px`,
-              left: `-${icon.position.left}px`,
-              right: `-${icon.position.right}px`,
-              bottom: `-${icon.position.bottom}px`,
+              top: `${icon.position.top}px`,
+              left: `${icon.position.left}px`,
+              right: `${icon.position.right}px`,
+              bottom: `${icon.position.bottom}px`,
               clip: `rect(${icon.position.top} ${icon.position.right} ${icon.position.bottom} ${icon.position.left})`,
             }}
           />

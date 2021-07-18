@@ -2,6 +2,7 @@ import sprite from "./img/animal-icons-featured.png";
 import "./App.css";
 import { Icon } from "./Components/Icon";
 import { Card } from "./Components/Card";
+import { User } from "./Components/User";
 
 let config = {
   row: {
@@ -84,9 +85,18 @@ const App = () => {
     return randomIcons;
   };
 
+  let card1 = <Card icons={iconObjects.slice(0, 6)} />;
+  let card2 = <Card icons={iconObjects.slice(6, 12)} />;
+  let card3 = <Card icons={iconObjects.slice(12, 18)} />;
+  let card4 = <Card icons={iconObjects.slice(18, 24)} />;
+
   return (
     <div className="App">
       <Card icons={generateRandomIcons(9)} />
+      <User name="Roberto" cards={[card1, card2]} />
+      <br />
+      <br />
+      <User name="Kari" cards={[card3, card4]} />
     </div>
   );
 };

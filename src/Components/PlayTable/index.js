@@ -1,17 +1,35 @@
 import { useState } from "react";
 
 export const PlayTable = ({ ...props }) => {
-  const [gameStarted, setGameStarted] = useState(false);
+  const [tableStarted, setTableStarted] = useState(false);
+  const [players, setPlayers] = useState([]);
+
+  const addPlayer = () => {
+    setPlayers([...players, { name: "Roberto", cards: [] }]);
+    setPlayers([...players, { name: "Kari", cards: [] }]);
+  };
+
+  const startGame = () => {
+    setPlayers(
+      players.map((player) => {
+        return { ...player, cards: [] };
+      })
+    );
+  };
 
   return gameStarted ? (
     <div>
-      game started!!
-      <button onClick={setGameStarted(false)}>End Game</button>
+      table started!!
+      {players.map((player) => {
+        <User name={player.name} />;
+      })}
+      <button onClick={startGame}>Start Game</button>
+      <button onClick={addPlayer}>Add Player</button>
     </div>
   ) : (
     <div>
       Game not started :(
-      <button onClick={setGameStarted(true)}>Start Game</button>
+      <button onClick={setTableStarted(true)}>Start Table</button>
     </div>
   );
 };

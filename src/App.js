@@ -6,20 +6,20 @@ import { User } from "./Components/User";
 
 let config = {
   row: {
-    0: { right: "80px", left: "20px" },
-    1: { right: "140px", left: "82px" },
-    2: { right: "200px", left: "142px" },
-    3: { right: "260px", left: "204px" },
-    4: { right: "320px", left: "264px" },
-    5: { right: "380px", left: "324px" },
+    0: { right: 80, left: 20 },
+    1: { right: 140, left: 82 },
+    2: { right: 200, left: 142 },
+    3: { right: 260, left: 204 },
+    4: { right: 320, left: 264 },
+    5: { right: 380, left: 324 },
   },
   column: {
-    0: { top: "20px", bottom: "80px" },
-    1: { top: "80px", bottom: "140px" },
-    2: { top: "140px", bottom: "200px" },
-    3: { top: "200px", bottom: "260px" },
-    4: { top: "260px", bottom: "320px" },
-    5: { top: "320px", bottom: "380px" },
+    0: { top: 20, bottom: 80 },
+    1: { top: 80, bottom: 140 },
+    2: { top: 140, bottom: 200 },
+    3: { top: 200, bottom: 260 },
+    4: { top: 260, bottom: 320 },
+    5: { top: 320, bottom: 380 },
   },
 };
 
@@ -92,12 +92,17 @@ const App = () => {
   };
 
   let card1 = <Card icons={generateRandomIcons(9)} />;
-  let card2 = <Card icons={generateRandomIcons(10)} />;
+  let card2 = <Card icons={generateRandomIcons(4)} />;
 
   return (
     <div className="App">
       {/* <Card icons={generateRandomIcons(9)} /> */}
       <User name="Roberto" cards={[card1]} />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       <br />
       <br />
       <User name="Kari" cards={[card2]} />

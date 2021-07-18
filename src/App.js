@@ -82,21 +82,20 @@ const App = () => {
         randomIcons.push(randIcon);
       }
     }
+    console.log(randomIcons.map((o) => o.id));
     return randomIcons;
   };
 
-  let card1 = <Card icons={iconObjects.slice(0, 6)} />;
-  let card2 = <Card icons={iconObjects.slice(6, 12)} />;
-  let card3 = <Card icons={iconObjects.slice(12, 18)} />;
-  let card4 = <Card icons={iconObjects.slice(18, 24)} />;
+  let card1 = <Card icons={generateRandomIcons(9)} />;
+  let card2 = <Card icons={generateRandomIcons(10)} />;
 
   return (
     <div className="App">
-      <Card icons={generateRandomIcons(9)} />
-      <User name="Roberto" cards={[card1, card2]} />
+      {/* <Card icons={generateRandomIcons(9)} /> */}
+      <User name="Roberto" cards={[card1]} />
       <br />
       <br />
-      <User name="Kari" cards={[card3, card4]} />
+      <User name="Kari" cards={[card2]} />
     </div>
   );
 };

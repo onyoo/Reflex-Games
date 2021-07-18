@@ -15,8 +15,8 @@ export const Card = ({ icons, ...props }) => {
             id={icon.id}
             style={{
               position: "absolute",
-              top: `${0 - icon.position.top}px`,
-              left: 0,
+              top: `-${icon.position.top}`,
+              left: `-${icon.position.right}`,
               clip: `rect(${icon.position.top} ${icon.position.right} ${icon.position.bottom} ${icon.position.left})`,
             }}
           />

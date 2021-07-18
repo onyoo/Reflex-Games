@@ -71,16 +71,21 @@ let iconObjects = confIcons.map((id, idx) => {
 });
 
 const App = () => {
+  const getUnique = (randomIconMap) => {
+    let icon = iconObjects[Math.floor(Math.random() * iconObjects.length)];
+    while (icon.id in randomIconMap) {
+      icon = iconObjects[Math.floor(Math.random() * iconObjects.length)];
+    }
+    return icon;
+  };
+
   const generateRandomIcons = (n) => {
     let randomIcons = [];
     let randomIconMap = {};
     for (var i = 0; i < n; i++) {
-      let randIcon =
-        iconObjects[Math.floor(Math.random() * iconObjects.length)];
-      if (!(randIcon.id in randomIconMap)) {
-        randomIconMap[randIcon.id] = 1;
-        randomIcons.push(randIcon);
-      }
+      let randIcon = getUnique(randomIconMap);
+      randomIconMap[randIcon.id] = 1;
+      randomIcons.push(randIcon);
     }
     console.log(randomIcons.map((o) => o.id));
     return randomIcons;

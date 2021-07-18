@@ -2,6 +2,7 @@ import sprite from "./img/animal-icons-featured.png";
 import "./App.css";
 import { Card } from "./Components/Card";
 import { User } from "./Components/User";
+import { PlayTable } from "./Components/PlayTable";
 
 let config = {
   row: {
@@ -61,7 +62,7 @@ let confIcons = [
   "skip9",
 ];
 
-let iconObjects = confIcons.map((id, idx) => {
+export let iconObjects = confIcons.map((id, idx) => {
   return {
     id: id,
     img: sprite,
@@ -69,45 +70,33 @@ let iconObjects = confIcons.map((id, idx) => {
   };
 });
 
+export const generateRandomIcons = (n) => {
+  let randomIcons = [];
+
+  for (var i = 0; i < n && i < iconObjects.length; i++) {
+    let usedIds = randomIcons.map((icon) => icon.id);
+    let randIcon = getUnique(usedIds);
+    randomIcons.push(randIcon);
+  }
+  return randomIcons;
+};
+
+export const getUnique = (usedIds) => {
+  let filteredIcons = iconObjects.filter(
+    (icon) => usedIds.indexOf(icon.id) === -1
+  );
+  let icon;
+  while (!icon && filteredIcons.length > 0) {
+    let idx = Math.floor(Math.random() * filteredIcons.length);
+    icon = filteredIcons[idx];
+  }
+  return icon;
+};
+
 const App = () => {
-  const getUnique = (usedIds) => {
-    let filteredIcons = iconObjects.filter(
-      (icon) => usedIds.indexOf(icon.id) === -1
-    );
-    let icon;
-    while (!icon && filteredIcons.length > 0) {
-      let idx = Math.floor(Math.random() * filteredIcons.length);
-      icon = filteredIcons[idx];
-    }
-    return icon;
-  };
-
-  const generateRandomIcons = (n) => {
-    let randomIcons = [];
-
-    for (var i = 0; i < n && i < iconObjects.length; i++) {
-      let usedIds = randomIcons.map((icon) => icon.id);
-      let randIcon = getUnique(usedIds);
-      randomIcons.push(randIcon);
-    }
-    return randomIcons;
-  };
-
-  let card1 = <Card icons={generateRandomIcons(125)} />;
-  let card2 = <Card icons={generateRandomIcons(4)} />;
-
   return (
     <div className="App">
-      {/* <Card icons={generateRandomIcons(9)} /> */}
-      <User name="Roberto" cards={[card1]} />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <User name="Kari" cards={[card2]} />
+      <PlayTable />
     </div>
   );
 };

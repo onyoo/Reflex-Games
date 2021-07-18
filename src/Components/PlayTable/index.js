@@ -1,15 +1,24 @@
 import { useState } from "react";
+import { User } from "../User";
+import { Deck } from "../Deck";
+import { iconObjects } from "../../App.js";
 
 export const PlayTable = ({ ...props }) => {
   const [tableStarted, setTableStarted] = useState(false);
   const [players, setPlayers] = useState([]);
+  const [deck, setDeck] = useState(null);
 
-  const addPlayer = () => {
-    setPlayers([...players, { name: "Roberto", cards: [] }]);
-    setPlayers([...players, { name: "Kari", cards: [] }]);
+  const addPlayers = () => {
+    setPlayers([...players,
+      { name: "Roberto", cards: [] },
+      { name: "Kari", cards: [] }]
+    );
   };
 
-  const startGame = () => {
+  const startGame = (gameType) => {
+    setDeck(
+      <Deck icons={iconObjects} dealCard={dealCard}/>
+    );
     setPlayers(
       players.map((player) => {
         return { ...player, cards: [] };
@@ -17,19 +26,38 @@ export const PlayTable = ({ ...props }) => {
     );
   };
 
-  return gameStarted ? (
+  const dealCard = (card) => {
+    let recipient = players[0];
+    setPlayers([].concat(
+      [{ name: recipient.name, cards: recipient.cards.push(card) }],
+      players.slice(1, players.length)
+    ))
+  };
+
+  return tableStarted ? (
     <div>
-      table started!!
-      {players.map((player) => {
-        <User name={player.name} />;
-      })}
-      <button onClick={startGame}>Start Game</button>
-      <button onClick={addPlayer}>Add Player</button>
+      Table started!!
+      <br/>
+      Players: {
+        players.map((player) => {
+          return <User name={player.name} cards={player.cards}/>;
+        })
+      }
+      <br/>
+      deck: { deck }
+      <br/>
+      <button onClick={addPlayers}>Add Players</button>
+      <button onClick={() => startGame("pickUp")}>Start Pick-Up Style Game</button>
+      <button onClick={() => startGame("discard")}>Start Discard Style Game</button>
     </div>
   ) : (
     <div>
-      Game not started :(
-      <button onClick={setTableStarted(true)}>Start Table</button>
+      <br/>
+      <br/>
+      Let's Play The Reflex Game!
+      <br/>
+      <br/>
+      <button onClick={() => setTableStarted(true)}>Start Table</button>
     </div>
   );
 };

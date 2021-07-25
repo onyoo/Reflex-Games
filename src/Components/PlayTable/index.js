@@ -6,6 +6,7 @@ import { iconObjects } from "../../App.js";
 
 export const PlayTable = ({ ...props }) => {
   const [tableStarted, setTableStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState([]);
   const [cards, setCards] = useState([]);
   const deckCapacity = 51;
@@ -65,6 +66,7 @@ export const PlayTable = ({ ...props }) => {
       })
     );
     dealPlayerHands(gameType);
+    setGameStarted(true);
   };
 
   const dealCard = (player,cardIdx) => {
@@ -89,10 +91,14 @@ export const PlayTable = ({ ...props }) => {
       }
       <br/>
       <br/>
+    </div>)}
+
+    {tableStarted && !gameStarted && (<div>
       <button onClick={addPlayers}>Add Players</button>
       <button onClick={() => startGame("pickUp")}>Start Pick-Up Style Game</button>
       <button onClick={() => startGame("discard")}>Start Discard Style Game</button>
     </div>)}
+
     {!tableStarted && (
       <div>
         <br/>

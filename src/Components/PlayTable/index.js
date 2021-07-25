@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "../User";
-import { Deck } from "../Deck";
+import { Card } from "../Card";
+import { generateRandomIcons } from "../../App.js";
 import { iconObjects } from "../../App.js";
 
 export const PlayTable = ({ ...props }) => {
   const [tableStarted, setTableStarted] = useState(false);
   const [players, setPlayers] = useState([]);
-  const [deck, setDeck] = useState(null);
+  const [cards, setCards] = useState([]);
+  const deckCapacity = 51;
+  const iconsPerCard = 6;
+
+
+  useEffect(() => {
+    initDeck(deckCapacity)
+  }, []);
+
+  const initDeck = (numOfCards) => {
+    let cards = [];
+    for (var i = 0; i < numOfCards; i++) {
+      cards.push(<Card icons={generateRandomIcons(iconsPerCard)}/>);
+    }
+    setCards(cards)
+  };
 
   const addPlayers = () => {
     setPlayers([...players,
@@ -15,27 +31,55 @@ export const PlayTable = ({ ...props }) => {
     );
   };
 
+  const dealPlayerHands = (gameType) => {
+    switch (gameType) {
+      case "pickUp":
+        dealCards(1)
+        break;
+      case "discard":
+        dealCards()
+        break;
+      default:
+        dealCards(1)
+    }
+  }
+
+  const dealCards = (cardsPerPlayer = null) => {
+    cardsPerPlayer = cardsPerPlayer !== null ? cardsPerPlayer :
+      Math.floor((deckCapacity - 1) / players.length)
+
+    let cardIdx = 0
+    for (var i = 0; i < cardsPerPlayer; i++) {
+      players.forEach(player => {
+        dealCard(player, cardIdx)
+        cardIdx += 1
+      });
+    }
+    setCards(cards.slice(cardIdx, cards.length))
+  }
+
   const startGame = (gameType) => {
-    setDeck(
-      <Deck icons={iconObjects} dealCard={dealCard}/>
-    );
     setPlayers(
       players.map((player) => {
         return { ...player, cards: [] };
       })
     );
+    dealPlayerHands(gameType);
   };
 
-  const dealCard = (card) => {
-    let recipient = players[0];
-    setPlayers([].concat(
-      [{ name: recipient.name, cards: recipient.cards.push(card) }],
-      players.slice(1, players.length)
-    ))
+  const dealCard = (player,cardIdx) => {
+    let card = cards[cardIdx];
+    if (card) {
+      setPlayers([
+        { name: player.name,
+          cards: player.cards.push(card)},
+        ...players.filter(user => user.name !== player.name)
+      ])
+    }
   };
 
-  return tableStarted ? (
-    <div>
+  return <div>
+    {tableStarted && (<div>
       Table started!!
       <br/>
       Players: {
@@ -44,20 +88,25 @@ export const PlayTable = ({ ...props }) => {
         })
       }
       <br/>
-      deck: { deck }
       <br/>
       <button onClick={addPlayers}>Add Players</button>
       <button onClick={() => startGame("pickUp")}>Start Pick-Up Style Game</button>
       <button onClick={() => startGame("discard")}>Start Discard Style Game</button>
-    </div>
-  ) : (
+    </div>)}
+    {!tableStarted && (
+      <div>
+        <br/>
+        <br/>
+        Let's Play The Reflex Game!
+        <br/>
+        <br/>
+        <button onClick={() => setTableStarted(true)}>Start Table</button>
+        <br/>
+        <br/>
+      </div>
+    )}
     <div>
-      <br/>
-      <br/>
-      Let's Play The Reflex Game!
-      <br/>
-      <br/>
-      <button onClick={() => setTableStarted(true)}>Start Table</button>
+      {cards.map(card => card)}
     </div>
-  );
+  </div>
 };

@@ -47,15 +47,18 @@ export const PlayTable = ({ ...props }) => {
 
   const dealCards = (cardsPerPlayer = null) => {
     cardsPerPlayer = cardsPerPlayer !== null ? cardsPerPlayer :
-      Math.floor((deckCapacity - 1) / players.length)
+      Math.floor((deckCapacity - 1) / players.length);
 
     let cardIdx = 0
+    let tempPlayers = [...players.map(player => ({...player}))]
     for (var i = 0; i < cardsPerPlayer; i++) {
-      players.forEach(player => {
-        dealCard(player, cardIdx)
+      tempPlayers = tempPlayers.map(player => {
+        player = dealCard(player, cardIdx)
         cardIdx += 1
+        return player
       });
     }
+    setPlayers(tempPlayers)
     setCards(cards.slice(cardIdx, cards.length))
   }
 
@@ -72,12 +75,10 @@ export const PlayTable = ({ ...props }) => {
   const dealCard = (player,cardIdx) => {
     let card = cards[cardIdx];
     if (card) {
-      setPlayers([
-        { name: player.name,
-          cards: player.cards.push(card)},
-        ...players.filter(user => user.name !== player.name)
-      ])
+      return { name: player.name,
+      cards: [...player.cards, card]}
     }
+    return player
   };
 
   return <div>
@@ -112,6 +113,7 @@ export const PlayTable = ({ ...props }) => {
       </div>
     )}
     <div>
+      Deck:
       {cards.map(card => card)}
     </div>
   </div>

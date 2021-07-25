@@ -82,10 +82,15 @@ export const PlayTable = ({ ...props }) => {
   };
 
   return <div>
+    <div>
+      Deck: {cards[0]}
+    </div>
     {tableStarted && (<div>
       Table started!!
       <br/>
-      Players: {
+      Players:
+      <br/>
+      {
         players.map((player) => {
           return <User name={player.name} cards={player.cards}/>;
         })
@@ -112,9 +117,5 @@ export const PlayTable = ({ ...props }) => {
         <br/>
       </div>
     )}
-    <div>
-      Deck:
-      {cards.map(card => card)}
-    </div>
   </div>
 };

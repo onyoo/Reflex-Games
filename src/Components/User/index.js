@@ -17,7 +17,7 @@ export const User = ({name, cards, ...props }) => {
   }, [cards]);
 
   return (
-    <div style={ {display: "inline-block", margin: "50px"}}>
+    <div id={name} style={ {display: "inline-block", margin: "50px"}}>
       {name}
       <br/>
       Card Count: {cards.length}

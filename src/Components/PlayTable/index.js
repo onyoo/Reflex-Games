@@ -6,7 +6,7 @@ import { iconObjects } from "../../App.js";
 
 export const PlayTable = ({ ...props }) => {
   const [tableStarted, setTableStarted] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(null);
   const [players, setPlayers] = useState([]);
   const [cards, setCards] = useState([]);
   const deckCapacity = 51;
@@ -16,6 +16,17 @@ export const PlayTable = ({ ...props }) => {
   useEffect(() => {
     initDeck(deckCapacity)
   }, []);
+
+  useEffect(() => {
+    console.log(players)
+    if (players.length > 0) {
+      checkForMatch("Kari", "lion")
+    }
+    document.addEventListener('check-match', e => {
+      console.log(players)
+      checkForMatch(e.detail.user, e.detail.id)
+   }, false);
+ }, [players]);
 
   const initDeck = (numOfCards) => {
     let cards = [];
@@ -68,8 +79,9 @@ export const PlayTable = ({ ...props }) => {
         return { ...player, cards: [] };
       })
     );
+    setGameStarted(gameType);
     dealPlayerHands(gameType);
-    setGameStarted(true);
+    console.log("startGame logs: ", players, cards, gameStarted)
   };
 
   const dealCard = (player,cardIdx) => {
@@ -81,8 +93,33 @@ export const PlayTable = ({ ...props }) => {
     return player
   };
 
+  const checkForMatch = (playerName, iconId) => {
+    console.log("checkForMatch players:", players)
+    debugger
+
+    let deckIcons = document.getElementById("deck").children[0].children
+    const isMatch = deckIcons.some(icon => icon.className === iconId)
+    if (isMatch) {
+      let player = players.find(player => player.name === playerName)
+
+      if(startGame === "pickUp"){
+        dealCard(player, 0)
+      }else if (startGame === "discard") {
+
+        let card = players[0].cards[0]
+        // TODO - remove card from player's hand
+        let tempPlayers = [...players]
+
+        setCards([card, ...cards])
+      }
+    }
+  }
+
   return <div>
-    <div>
+    {tableStarted && gameStarted && (<div>
+      {gameStarted}
+    </div>)}
+    <div id="deck">
       Deck: {cards[0]}
     </div>
     {tableStarted && (<div>

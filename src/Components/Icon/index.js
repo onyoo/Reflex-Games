@@ -1,7 +1,28 @@
 export const Icon = ({ image, names, style, id, ...props }) => {
+
+  const checkForMatch = (ev,id) => {
+    // let deckIcons = document.getElementById("deck").children[0].children
+    // // const playerName = event.target.parentElement.parentElement.parentElement.id
+    //
+    // let target = ev.target
+    // let playerName
+    // console.log(players, cards, gameStarted)
+    // debugger
+    // while (!playerName) {
+    //   target = target.parentElement
+    //   console.log(players)
+    //   if (players.some(player => player.name === target.id)) {
+    //     playerName = target.id
+    //   }
+    // }
+    const event = new CustomEvent('check-match', {detail: { user: "Roberto", id: "hippo" }});
+    document.dispatchEvent(event)
+
+  }
+
   return (
     <div
-      id={id}
+      className={id}
       style={{ position: "relative", display: "inline-block", padding: "1em" }}
     >
       <div
@@ -13,13 +34,10 @@ export const Icon = ({ image, names, style, id, ...props }) => {
           width: "60px",
           borderRadius: "3em",
         }}
+        onClick={ev => checkForMatch(ev, id)}
       >
-        {id}
+        {/*{id}*/}
       </div>
-      {/* <img height="400px" src={image} style={{ ...style }} /> */}
-      {/* {names.join(", ")} */}
-      <br />
-      <br />
     </div>
   );
 };

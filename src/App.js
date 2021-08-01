@@ -95,7 +95,7 @@ export const getUnique = (usedIds) => {
 const App = () => {
   // let conn = new RCTConnection();
   // conn.connect();
-  findLocalIp();
+  // findLocalIp();
 
   return (
     <div className="App">

@@ -100,10 +100,9 @@ export const PlayTable = ({ ...props }) => {
 
   const checkForMatch = (playerName, iconId) => {
     console.log("checkForMatch players:", players);
-    debugger;
 
     let deckIcons = document.getElementById("deck").children[0].children;
-    const isMatch = deckIcons.some((icon) => icon.className === iconId);
+    const isMatch = [...deckIcons].some((icon) => icon.className === iconId);
     if (isMatch) {
       let player = players.find((player) => player.name === playerName);
 

@@ -3,7 +3,12 @@ import { Icon } from "../Icon";
 
 export const Card = ({ icons, ...props }) => {
   return (
-    <div style={{ border: "1px solid red" }}>
+    <div style={{ border: "1px solid navy",
+      borderRadius: "350px",
+      height: "350px",
+      width: "350px",
+      margin: "0 auto"
+   }}>
       {/* <img height="400px" src={logo} /> */}
       <br />
       {icons.map((icon, idx) => {

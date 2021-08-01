@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 export const User = ({ name, cards, ...props }) => {
-  const [userCards, setUserCards] = useState(cards);
   const [visibleCard, setVisibleCard] = useState(null);
 
   useEffect(() => {
@@ -10,11 +9,17 @@ export const User = ({ name, cards, ...props }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (cards.length > 0) {
+      setVisibleCard(cards[0]);
+    }
+  }, [cards]);
+
   return (
-    <div>
+    <div id={name} style={{ display: "inline-block", margin: "50px" }}>
       {name}
       <br />
-      Card Count: {userCards.length}
+      Card Count: {cards.length}
       <br />
       {visibleCard}
     </div>

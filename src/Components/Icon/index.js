@@ -1,8 +1,7 @@
 export const Icon = ({ image, names, style, id, ...props }) => {
-
-  const checkForMatch = (ev,id) => {
+  const checkForMatch = (ev, id) => {
     // let deckIcons = document.getElementById("deck").children[0].children
-    // // const playerName = event.target.parentElement.parentElement.parentElement.id
+    const playerName = ev.target.parentElement.parentElement.parentElement.id;
     //
     // let target = ev.target
     // let playerName
@@ -15,10 +14,14 @@ export const Icon = ({ image, names, style, id, ...props }) => {
     //     playerName = target.id
     //   }
     // }
-    const event = new CustomEvent('check-match', {detail: { user: "Roberto", id: "hippo" }});
-    document.dispatchEvent(event)
+    let player = `${playerName}`;
+    let animal = `${ev.target.parentElement.classList.value}`;
 
-  }
+    const event = new CustomEvent("check-match", {
+      detail: { user: player, id: animal },
+    });
+    document.dispatchEvent(event);
+  };
 
   return (
     <div
@@ -34,7 +37,7 @@ export const Icon = ({ image, names, style, id, ...props }) => {
           width: "60px",
           borderRadius: "3em",
         }}
-        onClick={ev => checkForMatch(ev, id)}
+        onClick={(ev) => checkForMatch(ev, id)}
       >
         {/*{id}*/}
       </div>

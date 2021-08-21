@@ -1,7 +1,8 @@
 import sprite from "./img/animal-icons-featured.png";
 import "./App.css";
 import { PlayTable } from "./Components/PlayTable";
-import { RCTConnection, findLocalIp } from "./Services/RCTService";
+import { RCTConnection, findLocalIp } from "./Services/RTCService";
+import "./Services/RTCService/video"
 
 let config = {
   row: {
@@ -93,8 +94,8 @@ export const getUnique = (usedIds) => {
 };
 
 const App = () => {
-  // let conn = new RCTConnection();
-  // conn.connect();
+  let conn = new RCTConnection();
+  conn.createChannel();
   // findLocalIp();
 
   return (

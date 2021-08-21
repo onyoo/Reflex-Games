@@ -23,6 +23,7 @@ export class RCTConnection {
   };
 
   _onIceCandidate = (conn, event) => {
+    console.log("_onIceCandidate triggered", conn)
     this._getOtherConn(conn)
       .addIceCandidate(event.candidate)
       .then(this._onAddIceCandidateSuccess, this._onAddIceCandidateError);

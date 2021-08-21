@@ -9,6 +9,8 @@ export const PlayTable = ({ ...props }) => {
   const [gameStarted, setGameStarted] = useState(null);
   const [players, setPlayers] = useState([]);
   const [cards, setCards] = useState([]);
+  const PICK_UP = "pickUp";
+  const DISCARD = "discard";
   const deckCapacity = 51;
   const iconsPerCard = 6;
 
@@ -17,14 +19,9 @@ export const PlayTable = ({ ...props }) => {
   }, []);
 
   useEffect(() => {
-    console.log(players);
-    if (players.length > 0) {
-      checkForMatch("Kari", "lion");
-    }
     document.addEventListener(
       "check-match",
       (e) => {
-        console.log(players);
         checkForMatch(e.detail.user, e.detail.id);
       },
       false
@@ -49,10 +46,10 @@ export const PlayTable = ({ ...props }) => {
 
   const dealPlayerHands = (gameType) => {
     switch (gameType) {
-      case "pickUp":
+      case PICK_UP:
         dealCards(1);
         break;
-      case "discard":
+      case DISCARD:
         dealCards();
         break;
       default:
@@ -93,38 +90,58 @@ export const PlayTable = ({ ...props }) => {
   const dealCard = (player, cardIdx) => {
     let card = cards[cardIdx];
     if (card) {
-      return { name: player.name, cards: [...player.cards, card] };
+      return { name: player.name, cards: [card, ...player.cards] };
     }
     return player;
   };
 
   const checkForMatch = (playerName, iconId) => {
     if (players.length > 0) {
-      console.log("players:", players, " playerName:: ", playerName, iconId);
       let deckIcons = [...document.getElementById("deck").children[0].children];
       const isMatch = deckIcons.some((icon) => icon.className === iconId);
+
       if (isMatch) {
+        console.log("It's a match! ", playerName, " => ", iconId);
         let player = players.find((player) => player.name === playerName);
 
-        if (startGame === "pickUp") {
-          dealCard(player, 0);
-        } else if (startGame === "discard") {
-          let card = players[0].cards[0];
-          // TODO - remove card from player's hand
-          let tempPlayers = [...players];
+        if (gameStarted === PICK_UP) {
+          console.log("[PickUp Play Mode] Adding top deck card to ", player.name, "'s hand");
 
-          setCards([card, ...cards]);
+          let newPlayer = dealCard(player, 0);
+          updatePlayer(newPlayer);
+
+          setCards(cards.slice(1, cards.length))
+
+        } else if (gameStarted === DISCARD) {
+          console.log("[Discard Play Mode] To Be Implemented...");
         }
+      } else {
+        console.log("That is not a match. ", playerName, " => ", iconId);
       }
     }
   };
 
+  const updatePlayer = (updatedPlayer) => {
+    console.log("Searching for ", updatedPlayer, " on playtable. Current players: ", players);
+    let matchedPlayer = players.find((existingPlayer) => existingPlayer.name === updatedPlayer.name);
+
+    if (matchedPlayer) {
+      console.log("Found matching player on playtable: ", matchedPlayer.name, ". Updating players.");
+      let restOfPlayers = players.filter((existingPlayer) => existingPlayer.name !== matchedPlayer.name);
+      setPlayers([updatedPlayer, ...restOfPlayers])
+    } else {
+      console.log("No matching player found for: ", updatedPlayer, ". No updates to make.");
+    }
+  }
+
   return (
     <div>
       {tableStarted && gameStarted && <div>{gameStarted}</div>}
-      <div id="deck">Deck: {cards[0]}</div>
+      Deck Count: { cards.length }
+      <div id="deck">{cards[0]}</div>
       {tableStarted && (
         <div>
+          <br />
           Table started!!
           <br />
           Players:

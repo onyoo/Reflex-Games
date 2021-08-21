@@ -7,11 +7,14 @@ import { iconObjects } from "../../App.js";
 export const PlayTable = ({ ...props }) => {
   const [tableStarted, setTableStarted] = useState(false);
   const [gameStarted, setGameStarted] = useState(null);
+  const [winner, setWinner] = useState(null);
   const [players, setPlayers] = useState([]);
   const [cards, setCards] = useState([]);
+
   const PICK_UP = "pickUp";
   const DISCARD = "discard";
-  const deckCapacity = 51;
+
+  const deckCapacity = 5;
   const iconsPerCard = 6;
 
   useEffect(() => {
@@ -26,7 +29,12 @@ export const PlayTable = ({ ...props }) => {
       },
       false
     );
+    checkIfGameOver();
   }, [players]);
+
+  useEffect(() => {
+    checkIfGameOver();
+  }, [cards]);
 
   const initDeck = (numOfCards) => {
     let cards = [];
@@ -87,6 +95,16 @@ export const PlayTable = ({ ...props }) => {
     console.log("startGame logs: ", players, cards, gameStarted);
   };
 
+  const resetTable = () => {
+    setTableStarted(false);
+    setGameStarted(null);
+    setWinner(null);
+    setPlayers([]);
+    setCards([]);
+
+    initDeck(deckCapacity);
+  }
+
   const dealCardFromDeckToPlayer = (player, cardIdx) => {
     let card = cards[cardIdx];
     if (card) {
@@ -113,19 +131,15 @@ export const PlayTable = ({ ...props }) => {
         let player = players.find((player) => player.name === playerName);
 
         if (gameStarted === PICK_UP) {
-          console.log("[PickUp Play Mode] Adding top deck card to ", player.name, "'s hand");
           let newPlayer = dealCardFromDeckToPlayer(player, 0);
           updatePlayer(newPlayer);
 
-          console.log("[PickUp Play Mode] Removing top card from deck");
           setCards(cards.slice(1, cards.length))
 
         } else if (gameStarted === DISCARD) {
-          console.log("[Discard Play Mode] Dealing ", player.name, "'s card to the deck");
           let newDeck = [player.cards[0], ...cards];
           setCards(newDeck);
 
-          console.log("[Discard Play Mode] Removing ", iconId, "from ", player.name, "'s hand");
           let updatedPlayer = removeCardFromPlayer(player, 0);
           updatePlayer(updatedPlayer);
         }
@@ -136,9 +150,7 @@ export const PlayTable = ({ ...props }) => {
   };
 
   const updatePlayer = (updatedPlayer) => {
-    console.log("Searching for ", updatedPlayer, " on playtable. Current players: ", players);
     let matchedPlayer = players.find((existingPlayer) => existingPlayer.name === updatedPlayer.name);
-
     if (matchedPlayer) {
       console.log("Found matching player on playtable: ", matchedPlayer.name, ". Updating players.");
       let restOfPlayers = players.filter((existingPlayer) => existingPlayer.name !== matchedPlayer.name);
@@ -148,17 +160,54 @@ export const PlayTable = ({ ...props }) => {
     }
   }
 
+  const checkIfGameOver = () => {
+    if (!winner) {
+      if (gameStarted == PICK_UP && cards.length == 0) {
+        let roundWinner = players.reduce((leader, nextPlayer) => leader.cards.length > nextPlayer.cards.length ? leader : nextPlayer);
+        setWinner(roundWinner.name);
+
+      } else if (gameStarted == DISCARD) {
+        let roundWinner = players.find((player) => player.cards.length == 0);
+        if (roundWinner) {
+          setWinner(roundWinner.name);
+        }
+      }
+    }
+  }
+
   return (
     <div>
-      {tableStarted && gameStarted && <div>{gameStarted}</div>}
-      Deck Count: { cards.length }
-      <div id="deck">{cards[0]}</div>
-      {tableStarted && (
+      {winner && (
         <div>
           <br />
-          Table started!!
           <br />
-          Players:
+          GAME OVER! {winner} won!
+          <br />
+          <br />
+          <button onClick={resetTable}>Reset Table </button>
+        </div>
+      )}
+
+      {!winner && tableStarted && gameStarted &&
+        <div>{gameStarted}</div>
+      }
+
+      { cards.length > 0 && !winner && (
+        <div>
+        Deck Count: { cards.length }
+          <div id="deck">{cards[0]}</div>
+        </div>
+      )}
+
+      {tableStarted && (
+        <div>
+          {!winner &&
+            <div>
+              <br />
+              Table started!!
+              <br />
+            </div>
+          }
           <br />
           {players.map((player) => {
             return <User name={player.name} cards={player.cards} />;
@@ -168,7 +217,7 @@ export const PlayTable = ({ ...props }) => {
         </div>
       )}
 
-      {tableStarted && !gameStarted && (
+      {!winner && tableStarted && !gameStarted && (
         <div>
           <button onClick={addPlayers}>Add Players</button>
           <button onClick={() => startGame("pickUp")}>
@@ -180,7 +229,7 @@ export const PlayTable = ({ ...props }) => {
         </div>
       )}
 
-      {!tableStarted && (
+      {!winner && !tableStarted && (
         <div>
           <br />
           <br />

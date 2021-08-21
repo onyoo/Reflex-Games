@@ -1,15 +1,69 @@
 export class RCTConnection {
-  connect = () => {
-    this.connection = new RTCPeerConnection();
-    this.sendChannel = this.connection.createDataChannel("sendChannel");
-    this.sendChannel.onopen = this.handleSendChannelStatusChange;
-    this.sendChannel.onclose = this.handleSendChannelStatusChange;
+  createChannel = (channelName = "reflex-game-channel") => {
+    let servers = null;
+    this.connection = new RTCPeerConnection(servers);
+    console.log("Created RTC local connection object.");
+
+    this.dataChannel = this.connection.createDataChannel(channelName);
+    console.log(`Created data channel: ${channelName}`);
+
+    this.connection.onicecandidate = (ev) => {
+      this._onIceCandidate(this.connection, ev);
+    };
+    this.dataChannel.onopen = this._handleSendChannelStatusChange;
+    this.dataChannel.onclose = this._handleSendChannelStatusChange;
+
+    this.remoteConnection = new RTCPeerConnection(servers);
+    console.log("Created remote peer connection object.");
+
+    this.remoteConnection.onicecandidate = (ev) => {
+      this._onIceCandidate(this.remoteConnection, ev);
+    };
+    this.remoteConnection.ondatachannel = this._receiveChannelCallback;
   };
 
-  handleSendChannelStatusChange = (event) => {
+  _onIceCandidate = (conn, event) => {
+    this._getOtherConn(conn)
+      .addIceCandidate(event.candidate)
+      .then(this._onAddIceCandidateSuccess, this._onAddIceCandidateError);
+    console.log(
+      `${this._connName(conn)} ICE candidate: ${
+        event.candidate ? event.candidate.candidate : "(null)"
+      }`
+    );
+  }
+
+  _onAddIceCandidateSuccess = () => {
+    console.log("Add Ice Candidate Successfull!")
+  }
+
+  _onAddIceCandidateError = error => {
+    console.log(`Failed to add Ice Candidate: ${error.toString()}`)
+  }
+
+  _connName = (conn) => {
+    return conn === this.connection
+      ? "localPeerConnection"
+      : "remotePeerConnection";
+  }
+
+  _getOtherConn = (conn) => {
+    return conn === this.dataChannel ? this.remoteConnection : this.dataChannel;
+  }
+
+  _receiveChannelCallback = (event) => {
     debugger;
-    if (this.sendChannel) {
-      var state = this.sendChannel.readyState;
+    let receiveChannel = event.channel;
+    receiveChannel.onmessage = this.handleReceiveMessage;
+    receiveChannel.onopen = this.handleReceiveChannelStatusChange;
+    receiveChannel.onclose = this.handleReceiveChannelStatusChange;
+  };
+
+  _handleSendChannelStatusChange = (event) => {
+    console.log("Channel status changed: ", event);
+    debugger;
+    if (this.dataChannel) {
+      var state = this.dataChannel.readyState;
 
       if (state === "open") {
         // messageInputBox.disabled = false;
@@ -26,11 +80,14 @@ export class RCTConnection {
     }
   };
 
-  receiveChannelCallback = (event) => {
-    let receiveChannel = event.channel;
-    receiveChannel.onmessage = this.handleReceiveMessage;
-    receiveChannel.onopen = this.handleReceiveChannelStatusChange;
-    receiveChannel.onclose = this.handleReceiveChannelStatusChange;
+  handleReceiveMessage = (event) => {
+    console.log(event);
+    debugger;
+  };
+
+  handleReceiveChannelStatusChange = (event) => {
+    console.log(event);
+    debugger;
   };
 }
 

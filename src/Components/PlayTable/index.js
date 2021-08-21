@@ -67,7 +67,7 @@ export const PlayTable = ({ ...props }) => {
     let tempPlayers = [...players.map((player) => ({ ...player }))];
     for (var i = 0; i < cardsPerPlayer; i++) {
       tempPlayers = tempPlayers.map((player) => {
-        player = dealCard(player, cardIdx);
+        player = dealCardFromDeckToPlayer(player, cardIdx);
         cardIdx += 1;
         return player;
       });
@@ -87,13 +87,21 @@ export const PlayTable = ({ ...props }) => {
     console.log("startGame logs: ", players, cards, gameStarted);
   };
 
-  const dealCard = (player, cardIdx) => {
+  const dealCardFromDeckToPlayer = (player, cardIdx) => {
     let card = cards[cardIdx];
     if (card) {
       return { name: player.name, cards: [card, ...player.cards] };
     }
     return player;
   };
+
+  const removeCardFromPlayer = (player, cardIdx) => {
+    let card = player.cards[cardIdx];
+    if (card) {
+      return { name: player.name, cards: player.cards.slice(1, player.cards.length)}
+    }
+    return player;
+  }
 
   const checkForMatch = (playerName, iconId) => {
     if (players.length > 0) {
@@ -106,14 +114,20 @@ export const PlayTable = ({ ...props }) => {
 
         if (gameStarted === PICK_UP) {
           console.log("[PickUp Play Mode] Adding top deck card to ", player.name, "'s hand");
-
-          let newPlayer = dealCard(player, 0);
+          let newPlayer = dealCardFromDeckToPlayer(player, 0);
           updatePlayer(newPlayer);
 
+          console.log("[PickUp Play Mode] Removing top card from deck");
           setCards(cards.slice(1, cards.length))
 
         } else if (gameStarted === DISCARD) {
-          console.log("[Discard Play Mode] To Be Implemented...");
+          console.log("[Discard Play Mode] Dealing ", player.name, "'s card to the deck");
+          let newDeck = [player.cards[0], ...cards];
+          setCards(newDeck);
+
+          console.log("[Discard Play Mode] Removing ", iconId, "from ", player.name, "'s hand");
+          let updatedPlayer = removeCardFromPlayer(player, 0);
+          updatePlayer(updatedPlayer);
         }
       } else {
         console.log("That is not a match. ", playerName, " => ", iconId);

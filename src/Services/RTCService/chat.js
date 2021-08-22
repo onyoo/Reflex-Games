@@ -13,7 +13,8 @@ const socket = io(URL, { autoConnect: true });
 
 setTimeout(() => {
   console.log("sending....")
-  socket.emit("REQ_MOVE", {card: 8, player: 13}, (answer) => {
+  socket.emit("TABLE_INFO",{id: 1})
+  socket.emit("REQ_MOVE", {table_id: 1, move: {card: 8, player: 13}}, (answer) => {
     console.log("got reply to move::", answer)
 
   })

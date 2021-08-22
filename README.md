@@ -1,3 +1,13 @@
+
+# REflex games setup
+
+`npm install`
+term 1: `node src/Services/RTCService/ChatService.js` // starts socket listener and "server state" for tables
+term 2: `npm start`  // starts front-end client
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

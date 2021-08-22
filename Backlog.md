@@ -1,15 +1,18 @@
 ## Backlog
 
 ### Pick Up Play
- - onClick iff match, move the deck card to that player's hand[0]
-- Game Ends - When deck is empty. Player with most cards in hand wins.
 
 ### Discard Play
-- onClick iff match, move the player's card to the top of the deck[0]
-- Game Ends - When any player is out of cards. Player who got rid of their cards first, wins.
 
 ### Other
+- When updating a player on the playtable, update in same position so there's no screen jittering
+- Deck shouldn't be able to match itself
 - Add multi-computer play capabilities
 - Prevent starting a game before adding players
 - Ensure at least one match between player hands and deck hand
 - Final UI styling
+- Prevent multiple players having the same name
+- Add max players check
+- Be able to enter a custom player name
+- Add ability to start a new game with the same set of players
+- Add a rolling scoreboard of games won with the same player set

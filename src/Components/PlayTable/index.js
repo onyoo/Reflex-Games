@@ -7,9 +7,14 @@ import { iconObjects } from "../../App.js";
 export const PlayTable = ({ ...props }) => {
   const [tableStarted, setTableStarted] = useState(false);
   const [gameStarted, setGameStarted] = useState(null);
+  const [winner, setWinner] = useState(null);
   const [players, setPlayers] = useState([]);
   const [cards, setCards] = useState([]);
-  const deckCapacity = 51;
+
+  const PICK_UP = "pickUp";
+  const DISCARD = "discard";
+
+  const deckCapacity = 5;
   const iconsPerCard = 6;
 
   useEffect(() => {
@@ -17,19 +22,19 @@ export const PlayTable = ({ ...props }) => {
   }, []);
 
   useEffect(() => {
-    console.log(players);
-    if (players.length > 0) {
-      checkForMatch("Kari", "lion");
-    }
     document.addEventListener(
       "check-match",
       (e) => {
-        console.log(players);
         checkForMatch(e.detail.user, e.detail.id);
       },
       false
     );
+    checkIfGameOver();
   }, [players]);
+
+  useEffect(() => {
+    checkIfGameOver();
+  }, [cards]);
 
   const initDeck = (numOfCards) => {
     let cards = [];
@@ -49,10 +54,10 @@ export const PlayTable = ({ ...props }) => {
 
   const dealPlayerHands = (gameType) => {
     switch (gameType) {
-      case "pickUp":
+      case PICK_UP:
         dealCards(1);
         break;
-      case "discard":
+      case DISCARD:
         dealCards();
         break;
       default:
@@ -70,7 +75,7 @@ export const PlayTable = ({ ...props }) => {
     let tempPlayers = [...players.map((player) => ({ ...player }))];
     for (var i = 0; i < cardsPerPlayer; i++) {
       tempPlayers = tempPlayers.map((player) => {
-        player = dealCard(player, cardIdx);
+        player = dealCardFromDeckToPlayer(player, cardIdx);
         cardIdx += 1;
         return player;
       });
@@ -90,44 +95,119 @@ export const PlayTable = ({ ...props }) => {
     console.log("startGame logs: ", players, cards, gameStarted);
   };
 
-  const dealCard = (player, cardIdx) => {
+  const resetTable = () => {
+    setTableStarted(false);
+    setGameStarted(null);
+    setWinner(null);
+    setPlayers([]);
+    setCards([]);
+
+    initDeck(deckCapacity);
+  }
+
+  const dealCardFromDeckToPlayer = (player, cardIdx) => {
     let card = cards[cardIdx];
     if (card) {
-      return { name: player.name, cards: [...player.cards, card] };
+      return { name: player.name, cards: [card, ...player.cards] };
     }
     return player;
   };
 
+  const removeCardFromPlayer = (player, cardIdx) => {
+    let card = player.cards[cardIdx];
+    if (card) {
+      return { name: player.name, cards: player.cards.slice(1, player.cards.length)}
+    }
+    return player;
+  }
+
   const checkForMatch = (playerName, iconId) => {
     if (players.length > 0) {
-      console.log("players:", players, " playerName:: ", playerName, iconId);
       let deckIcons = [...document.getElementById("deck").children[0].children];
       const isMatch = deckIcons.some((icon) => icon.className === iconId);
+
       if (isMatch) {
+        console.log("It's a match! ", playerName, " => ", iconId);
         let player = players.find((player) => player.name === playerName);
 
-        if (startGame === "pickUp") {
-          dealCard(player, 0);
-        } else if (startGame === "discard") {
-          let card = players[0].cards[0];
-          // TODO - remove card from player's hand
-          let tempPlayers = [...players];
+        if (gameStarted === PICK_UP) {
+          let newPlayer = dealCardFromDeckToPlayer(player, 0);
+          updatePlayer(newPlayer);
 
-          setCards([card, ...cards]);
+          setCards(cards.slice(1, cards.length))
+
+        } else if (gameStarted === DISCARD) {
+          let newDeck = [player.cards[0], ...cards];
+          setCards(newDeck);
+
+          let updatedPlayer = removeCardFromPlayer(player, 0);
+          updatePlayer(updatedPlayer);
         }
+      } else {
+        console.log("That is not a match. ", playerName, " => ", iconId);
       }
     }
   };
 
+  const updatePlayer = (updatedPlayer) => {
+    let matchedPlayer = players.find((existingPlayer) => existingPlayer.name === updatedPlayer.name);
+    if (matchedPlayer) {
+      console.log("Found matching player on playtable: ", matchedPlayer.name, ". Updating players.");
+      let restOfPlayers = players.filter((existingPlayer) => existingPlayer.name !== matchedPlayer.name);
+      setPlayers([updatedPlayer, ...restOfPlayers])
+    } else {
+      console.log("No matching player found for: ", updatedPlayer, ". No updates to make.");
+    }
+  }
+
+  const checkIfGameOver = () => {
+    if (!winner) {
+      if (gameStarted == PICK_UP && cards.length == 0) {
+        let roundWinner = players.reduce((leader, nextPlayer) => leader.cards.length > nextPlayer.cards.length ? leader : nextPlayer);
+        setWinner(roundWinner.name);
+
+      } else if (gameStarted == DISCARD) {
+        let roundWinner = players.find((player) => player.cards.length == 0);
+        if (roundWinner) {
+          setWinner(roundWinner.name);
+        }
+      }
+    }
+  }
+
   return (
     <div>
-      {tableStarted && gameStarted && <div>{gameStarted}</div>}
-      <div id="deck">Deck: {cards[0]}</div>
+      {winner && (
+        <div>
+          <br />
+          <br />
+          GAME OVER! {winner} won!
+          <br />
+          <br />
+          <button onClick={resetTable}>Reset Table </button>
+        </div>
+      )}
+
+      {!winner && tableStarted && gameStarted &&
+        <div>{gameStarted}</div>
+      }
+
+      { cards.length > 0 && !winner && (
+        <div>
+        Deck Count: { cards.length }
+          <div id="deck">{cards[0]}</div>
+        </div>
+      )}
+
       {tableStarted && (
         <div>
-          Table started!!
-          <br />
-          Players:
+          {!winner &&
+            <div>
+              <br />
+              Table started!!
+              <br />
+            </div>
+          }
           <br />
           {players.map((player) => {
             return <User name={player.name} cards={player.cards} />;
@@ -137,7 +217,7 @@ export const PlayTable = ({ ...props }) => {
         </div>
       )}
 
-      {tableStarted && !gameStarted && (
+      {!winner && tableStarted && !gameStarted && (
         <div>
           <button onClick={addPlayers}>Add Players</button>
           <button onClick={() => startGame("pickUp")}>
@@ -149,7 +229,7 @@ export const PlayTable = ({ ...props }) => {
         </div>
       )}
 
-      {!tableStarted && (
+      {!winner && !tableStarted && (
         <div>
           <br />
           <br />
